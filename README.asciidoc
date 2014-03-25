@@ -60,6 +60,7 @@ $ vagrant origin-local-checkout <github username>
 This will clone 3 repositores from your link:http://www.github.com[GitHub] account and link them against the upstream repositories.
 
 .GitHub repositories
+Make sure that you have fork of these repositories in your link:http://www.github.com[GitHub] account:
 
 * link:http://github.com/openshift/rhc[Command line tools]
 * link:http://github.com/openshift/origin-server[OpenShift Origin console, broker and node]

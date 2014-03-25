@@ -44,27 +44,35 @@ module Vagrant
           remote_write(env[:machine], "#{Constants.build_dir}/configure_origin.pp") {
             config = "
 class { 'openshift_origin' :
-  domain                     => '#{domain}',
-  broker_hostname            => '#{hostname}',
-  node_hostname              => '#{hostname}',
-  named_hostname             => '#{hostname}',
-  datastore_hostname         => '#{hostname}',
-  activemq_hostname          => '#{hostname}',
-  openshift_user1            => 'admin',
-  openshift_password1        => 'admin',
-  bind_key                   => '#{key}',
-  override_install_repo      => 'file://#{Constants.build_dir}/origin-rpms',
-  development_mode           => true,
-  conf_node_external_eth_dev => '#{links.first}',
-  register_host_with_named   => true,
-  broker_auth_plugin         => 'mongo',
-  conf_broker_auth_salt      => 'salt salt salt',
-  node_unmanaged_users       => ['#{env[:machine].ssh_info[:username]}'],
-  node_container_plugin      => '#{env[:machine].config.openshift.container}'"
+  domain                             => '#{domain}',
+  broker_hostname                    => '#{hostname}',
+  node_hostname                      => '#{hostname}',
+  named_hostname                     => '#{hostname}',
+  datastore_hostname                 => '#{hostname}',
+  activemq_hostname                  => '#{hostname}',
+  openshift_user1                    => 'admin',
+  openshift_password1                => 'admin',
+  bind_key                           => '#{key}',
+  override_install_repo              => 'file://#{Constants.build_dir}/origin-rpms',
+  development_mode                   => true,
+  conf_node_external_eth_dev         => '#{links.first}',
+  register_host_with_named           => true,
+  broker_auth_plugin                 => 'htpasswd',
+  conf_broker_auth_salt              => 'salt salt salt',
+  conf_broker_multi_haproxy_per_node => true,
+  conf_valid_gear_sizes              => ['small','medium'],
+  node_frontend_plugins              => ['apache-mod-rewrite','nodejs-websocket','haproxy-sni-proxy'],
+  node_unmanaged_users               => ['#{env[:machine].ssh_info[:username]}'],
+  node_container_plugin              => '#{env[:machine].config.openshift.container}',"
             env[:machine].config.openshift.advanced_puppet_values.each do |k,v|
-              config += %{  #{k} => #{v}\n}
+              config += %{  #{k} => '#{v}',\n}
             end
-            config += "}"
+            config += "\n  repos_base => '#{env[:machine].config.openshift.repos_base}'," unless env[:machine].config.openshift.repos_base.nil?
+            config += "\n  os_repo => '#{env[:machine].config.openshift.os_repo}'," unless env[:machine].config.openshift.os_repo.nil?
+            config += "\n  os_updates_repo => '#{env[:machine].config.openshift.os_updates_repo}'," unless env[:machine].config.openshift.os_updates_repo.nil?
+            config += "\n  jenkins_repo_base => '#{env[:machine].config.openshift.jenkins_repo_base }'," unless env[:machine].config.openshift.jenkins_repo_base.nil?
+            config += "\n  optional_repo => '#{env[:machine].config.openshift.optional_repo}'," unless env[:machine].config.openshift.optional_repo.nil?
+            config += "\n}\n"
             config
           }
 

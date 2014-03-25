@@ -28,6 +28,26 @@ Compile an install the plugin using Rake
 $ rake install
 ----
 
+Note: If you receive the following message:
+
+[source, sh]
+----
+Vagrant's built-in bundler management mechanism is disabled because
+Vagrant is running in an external bundler environment. In these
+cases, plugin management does not work with Vagrant. To install
+plugins, use your own Gemfile. To load plugins, either put the
+plugins in the `plugins` group in your Gemfile or manually require
+them in a Vagrantfile.
+Now install the vagrant plugin
+----
+
+You can install the compiled gem via vagrant:
+
+[source, sh]
+----
+$ $ vagrant plugin install pkg/vagrant-openshift 0.0.10.gem
+----
+
 === Getting started
 
 ==== Clone the OpenShift Origin repositories
